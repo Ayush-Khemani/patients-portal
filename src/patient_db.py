@@ -43,6 +43,7 @@ class PatientDB:
             stmt = PATIENTS_TABLE.insert().values(**request_body)
             result = conn.execute(stmt)
             conn.commit()
+            print(result.inserted_primary_key)
             return result.inserted_primary_key
         except SQLAlchemyError as e:
             print("Error occurred while inserting the patient", e)
