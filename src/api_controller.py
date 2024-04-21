@@ -35,10 +35,11 @@ class PatientAPIController:
 
     def create_patient(self):
         request_body = request.json
-        patient_id = self.patient_db.insert_patient(request_body)
-        # print(patient_id)
+        patient_id = self.patient_db.insert_patient(request_body)[0]
+        print(patient_id)
         if patient_id:
             response_body = {"patient_id": patient_id}
+            
             status_code = 200
         else:
             response_body = {"error": "Failed to create patient"}
