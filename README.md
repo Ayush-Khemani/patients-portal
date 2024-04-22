@@ -52,7 +52,7 @@ source venv/bin/activate
 
 *In windows*
 ```bash
-source venv/Scripts/activate
+.\\venv\Scripts\activate.bat
 ```
 
 6. **Install python packages to run the application**
@@ -79,7 +79,8 @@ Here is the breakdown:
 
 - (`requirements.txt`) contains the packages needs to be installed for the application to run. you can append a 3pp (3rd Party Package) in this file if you have used any.
 
-## Testing the final application
+## Testing the APIs
+You can use the git bash to execute these shell commands if you don't have the linux or wsl.
 
 In Terminal :
 
@@ -125,7 +126,20 @@ Finally, to delete the created patient,
 ```bash
 bash delete_patient.sh
 ```
+## Testing the Final Application
+This is E2E test case, which is going to test the functionality of the patient portal:
 
+It creates the patient object from the Patient class and commits the patient to the database using the client request.
+
+Test 1 (basic):
+Simple test case for the creating the patient object and commiting it.
+
+Test 2 (validation of room and ward):
+it is invoked after Test 1 for the same patient. Therefore you need to think of the business logic for the commit method in patient.py that when the first patient is created, it can not be created again therefore it has to be updated using (PUT) request. 
+
+```bash
+python src/test_application.py
+```
 
 ## You can Refer:
 
