@@ -1,7 +1,7 @@
-from patient import Patient
+from patient import patient
 import requests
 
-patient1 = Patient("Fahad", "Male", 25)
+patient1 = patient("Fahad", "Male", 25)
 
 uri = "http://127.0.0.1:5000"
 
@@ -12,10 +12,12 @@ def get_patient_by_id(uri, id):
 
 def test_one():
     try:
-        patient1.set_room(32)
         patient1.set_ward(3)
+        patient1.set_room(32)
+        print(int(patient1.get_ward()))
         patient1.commit()
         response = get_patient_by_id(uri, patient1.get_id())
+        # print(response)
         if response['patient_id'] == patient1.get_id() and response["patient_name"] == patient1.get_name():
             print("test one passed")
         else :
@@ -27,6 +29,7 @@ def test_two():
     try:
         patient1.set_ward(2)
         patient1.set_room(23)
+
         patient1.commit()
         response = get_patient_by_id(uri, patient1.get_id())
         if response['patient_id'] == patient1.get_id() and response["patient_name"] == patient1.get_name():

@@ -18,7 +18,7 @@ class PatientAPIController:
         """
         self.app.route("/patients", methods=["GET"])(self.get_patients)
         self.app.route("/patients/<patient_id>", methods=["GET"])(self.get_patient)
-        self.app.route("/patients", methods=["POST"])(self.create_patient)
+        self.app.route("/patients", methods=["PUT"])(self.create_patient)
         self.app.route("/patient/<patient_id>", methods=["PUT"])(self.update_patient)
         self.app.route("/patient/<patient_id>", methods=["DELETE"])(self.delete_patient)
 
@@ -36,7 +36,7 @@ class PatientAPIController:
     def create_patient(self):
         request_body = request.json
         patient_id = self.patient_db.insert_patient(request_body)[0]
-        print(patient_id)
+        # print(patient_id)
         if patient_id:
             response_body = {"patient_id": patient_id}
             

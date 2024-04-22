@@ -22,6 +22,7 @@ from config import DOCTORS, GENDERS, WARD_NUMBERS , ROOM_NUMBERS, API_CONTROLLER
 import patient_db_config as pdb
 from uuid import uuid4
 from datetime import datetime
+from patient_db import PatientDB
 
 class patient:
         def __init__(self, name, gender, age):
@@ -34,7 +35,12 @@ class patient:
                 self.patient_ward = None
                 self.patient_room = None
 
-
+        def get_id(self):
+            return self.patient_id
+        
+        def get_name(self):
+            return self.patient_name
+        
         def validate_name(self, name):
             if not isinstance(name, str):
                 raise ValueError("Patient name must be a string")
@@ -64,11 +70,33 @@ class patient:
             ward = self.patient_ward
             if ward is None:
                 raise ValueError("Cannot validate room without specifying ward")
-            if room not in ROOM_NUMBERS[ward]:
+            if str(room) not in ROOM_NUMBERS[ward]:
                 raise ValueError(f"Invalid room number for ward {ward}. Valid options are: {', '.join(ROOM_NUMBERS[ward])}")
             return room
         
+        def set_ward(self, ward):
+            if(ward in WARD_NUMBERS):
+                self.patient_ward = ward
+                print("Have set the ward sucessfully")
+            else:
+                print("No such ward")
 
+
+        def set_room(self, room):
+            try:
+                if (self.validate_room(room)):
+                    self.patient_room = room
+                    print("Room has been updated Sucessfully")
+            except Exception as e:
+                print(e)
+
+        def get_room(self):
+            return self.patient_room
+        
+        def get_ward(self):
+            return self.patient_ward
+        
+        
 
         def update_room_and_ward(self, ward, room):
             if (ward in WARD_NUMBERS and room in ROOM_NUMBERS[ward]):
@@ -79,19 +107,17 @@ class patient:
                 print("Invalid ward or room number.")
 
 
-        def commit_to_database(self):
-            data = {
-                "patient_name": self.patient_name,
-                "patient_age": self.patient_age,
-                "patient_gender": self.patient_gender,
-                "patient_ward": self.patient_ward,
-                "patient_room": self.patient_room
-            }
-            response = requests.post(f"{API_CONTROLLER_URL}/patients", json=data)
-            if response.status_code == 200:
-                print("Patient data committed successfully.")
-                response_data = response.json()
-                self.patient_id = response_data.get("patient_id")
-                self.patient_checkin = response_data.get("patient_checkin")
+        def commit(self):
+            database = PatientDB()
+            existing_patient = database.fetch_patient_id_by_name(self.patient_name)
+            print(len(existing_patient))
+            if (len(existing_patient) == 0):
+                database.insert_patient(self.__dict__)
             else:
-                print("Failed to commit patient data to the database.")
+                print("Patient with the same name already exists.")
+
+                patient_id = existing_patient[0]['patient_id']
+                update_dict = self.__dict__
+                update_dict['patient_checkin'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                update_dict['patient_checkout'] = None
+                database.update_patient(patient_id, update_dict)
