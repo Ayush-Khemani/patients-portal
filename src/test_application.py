@@ -12,8 +12,8 @@ def get_patient_by_id(uri, id):
 
 def test_one():
     try:
-        patient1.set_ward(3)
         patient1.set_room(32)
+        patient1.set_ward(3)
         print(int(patient1.get_ward()))
         patient1.commit()
         response = get_patient_by_id(uri, patient1.get_id())
